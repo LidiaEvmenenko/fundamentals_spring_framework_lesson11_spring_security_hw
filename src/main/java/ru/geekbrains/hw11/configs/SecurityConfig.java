@@ -1,5 +1,6 @@
 package ru.geekbrains.hw11.configs;
 
+import org.springframework.context.annotation.Configuration;
 import ru.geekbrains.hw11.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Slf4j
@@ -18,13 +20,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
 
+//    @Autowired
+//    private DataSource dataSource;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         log.info("Dao Authentication Provider");
         http.authorizeRequests()
                 .antMatchers("/auth_page/**").authenticated()
-                .antMatchers("/user_info").authenticated()
-                .antMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN") // ROLE_ADMIN, ROLE_SUPERADMIN
+                .antMatchers("/user_info").hasAnyAuthority("READ")
+                .antMatchers("/write").hasAnyAuthority("DELETE", "WRITE")
+                .antMatchers("/delete").hasAnyAuthority("DELETE")
+                .antMatchers("/admin/**").hasAnyRole("ADMIN") // ROLE_ADMIN, ROLE_SUPERADMIN
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
