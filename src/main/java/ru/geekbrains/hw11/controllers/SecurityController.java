@@ -30,7 +30,7 @@ public class SecurityController {
 
     @GetMapping("/admin")
     public String adminPage() {
-        return "admin";
+        return "Вы имеете право доступа: admin";
     }
 
     @GetMapping("/user_info")
@@ -39,5 +39,15 @@ public class SecurityController {
                 .findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Unable to find user by username: " + principal.getName()));
         return "Authenticated user info: " + user.getUsername() + " : " + user.getEmail();
+    }
+
+    @GetMapping("/write")
+    public String writePage() {
+        return "Вы имеете право доступа: write";
+    }
+
+    @GetMapping("/delete")
+    public String deletedPage() {
+        return "Вы имеете право доступа: delete";
     }
 }
