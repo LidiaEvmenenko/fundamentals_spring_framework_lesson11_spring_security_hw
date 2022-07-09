@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.geekbrains.hw11.dto.AuthRequest;
 import ru.geekbrains.hw11.dto.AuthResponse;
+import ru.geekbrains.hw11.dto.RegistrationRequest;
 import ru.geekbrains.hw11.exceptions.MarketError;
 import ru.geekbrains.hw11.services.UserService;
 import ru.geekbrains.hw11.utils.JwtTokenUtil;
@@ -35,6 +36,21 @@ public class AuthController {
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(new AuthResponse(token, null));
+    }
+    @PostMapping("/auth/registration")
+    public ResponseEntity<?> createNewUser(@RequestBody RegistrationRequest registrationRequest) {
+
+        if (userService.getUserByUsername(registrationRequest.getUsername()) == null){
+            userService.registerNewUserAccount(registrationRequest);
+            return ResponseEntity.ok(new AuthResponse(null, "OK"));
+        }
+
+
+        return new ResponseEntity<>(new MarketError("Login " + registrationRequest.getUsername() +
+                " already exists"), HttpStatus.UNAUTHORIZED);
+
+
+
     }
 }

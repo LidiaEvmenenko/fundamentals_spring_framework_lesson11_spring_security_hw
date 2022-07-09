@@ -1,12 +1,31 @@
 package ru.geekbrains.hw11.repositories;
 
-import ru.geekbrains.hw11.entities.User;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import ru.geekbrains.hw11.model.User;
+
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
+    List<User> findAll();
+    @Modifying
+    @Query(value = "insert into users_roles (user_id, role_id) values(:user_id, :role_id)",
+            nativeQuery = true)
+    void insertQ(@Param("user_id") Long user_id, @Param("role_id") Long role_id);
+
+    @Override
+    <S extends User> S saveAndFlush(S entity);
+
+    @Modifying
+    @Query(value = "insert into users (username, password, email) values(:username, :password, :email)",
+            nativeQuery = true)
+    void insertU(@Param("username") String username, @Param("password") String password, @Param("email") String email);
 }

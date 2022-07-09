@@ -1,6 +1,7 @@
 package ru.geekbrains.hw11.controllers;
 
-import ru.geekbrains.hw11.entities.User;
+
+import ru.geekbrains.hw11.model.User;
 import ru.geekbrains.hw11.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
